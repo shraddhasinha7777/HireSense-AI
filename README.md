@@ -3,67 +3,75 @@
 ### Smart Recruitment Analytics System using Artificial Intelligence
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
-![Streamlit](https://img.shields.io/badge/Framework-Streamlit-red?logo=streamlit)
-![SQLite](https://img.shields.io/badge/Database-SQLite-green?logo=sqlite)
-![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-orange)
-![BCA Project](https://img.shields.io/badge/BCA-Major%20Project-purple)
+![Streamlit](https://img.shields.io/badge/Framework-Streamlit-FF4B4B?logo=streamlit)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite)
+![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4)
+![Academic Project](https://img.shields.io/badge/BCA-Major%20Project-success)
 
 ---
 
 # 📖 Overview
 
-HireSense-AI is a Smart Recruitment Analytics System developed as a **BCA Major Project**.
+**HireSense-AI** is a Smart Recruitment Analytics System developed as a **Bachelor of Computer Applications (BCA) Major Project**.
 
-The project is designed to make the resume screening process easier and more efficient. It helps recruiters upload resumes, compare them with job descriptions, calculate ATS scores, identify skill gaps, and generate AI-based hiring insights using Google Gemini AI.
+The project is designed to simplify the resume screening process. It helps recruiters upload resumes, compare them with job descriptions, calculate ATS scores, identify skill gaps, and generate AI-based hiring insights using Google Gemini AI.
 
-The application also provides candidate management, recruitment analytics, and report generation through a simple and interactive Streamlit interface.
+The application also provides candidate management, recruitment analytics, and report generation through an interactive Streamlit interface. The main objective of this project is to make the recruitment process faster, more organized, and easier to manage.
 
 ---
 
-# ✨ Features
+# ✨ Key Features
 
-### 📄 Resume Analysis
-- Parse PDF resumes
-- Extract candidate details
-- Detect education and experience
-- Extract technical skills
+## 📄 Resume Analysis
 
-### 🎯 ATS Evaluation
-- Calculate ATS Score
-- Match Resume with Job Description
+- PDF Resume Parsing
+- Candidate Information Extraction
+- Education Detection
+- Experience Detection
+- Technical Skill Extraction
+
+## 🎯 ATS Evaluation
+
+- ATS Score Calculation
+- Job Description Matching
 - Skill Gap Analysis
-- Explainable ATS Score
+- Explainable ATS Score Breakdown
 - Hiring Recommendation
 
-### 🤖 AI Features
+## 🤖 AI Features
+
 - AI Candidate Summary
 - SWOT Analysis
 - AI Hiring Recommendation
-- Interview Question Generation
-- Explainable AI Insights
+- AI Interview Question Generator
+- Explainable AI Insights (XAI)
 
-### 👥 Candidate Management
-- Bulk Resume Upload
+## 👥 Candidate Management
+
+- Bulk Resume Processing
 - Duplicate Candidate Detection
 - Blind Hiring Support
 - Candidate Search
 - Candidate Ranking
+- Candidate Record Management
 
-### 📊 Dashboard & Analytics
-- Recruitment Dashboard
-- ATS Score Analytics
+## 📊 Dashboard & Analytics
+
+- Interactive Dashboard
+- Recruitment KPIs
+- ATS Score Distribution
 - Candidate Analytics
 - Skill Distribution
-- Recruitment KPIs
 
-### 📤 Export Reports
-- PDF Report
-- CSV Report
-- TXT Report
+## 📤 Report Generation
+
+- PDF Report Export
+- CSV Export
+- TXT Export
 
 ---
 
-# 🏗️ Workflow
+# 🏗️ System Workflow
 
 ```text
 Resume Upload
@@ -84,7 +92,7 @@ ATS Score Calculation
 Google Gemini AI
       │
       ▼
-AI Summary & Hiring Insights
+AI Summary • SWOT Analysis • Interview Questions
       │
       ▼
 SQLite Database
@@ -93,23 +101,23 @@ SQLite Database
 Dashboard & Candidate Management
       │
       ▼
-Report Generation
+Report Generation (PDF • CSV • TXT)
 ```
 
 ---
 
-# 🛠️ Technology Used
+# 🛠️ Technology Stack
 
 | Category | Technology |
 |----------|------------|
 | Programming Language | Python |
 | Frontend | Streamlit |
 | Database | SQLite |
-| AI | Google Gemini AI |
+| Artificial Intelligence | Google Gemini AI |
 | Resume Parsing | pdfplumber |
 | Data Processing | Pandas |
 | Data Visualization | Plotly |
-| PDF Generation | FPDF2 |
+| PDF Report Generation | FPDF2 |
 | Environment Variables | python-dotenv |
 
 ---
@@ -128,6 +136,7 @@ HireSense-AI
 ├── requirements.txt
 │
 ├── database/
+│
 ├── pages/
 │   ├── _Resume_Analyzer.py
 │   ├── _Dashboard.py
@@ -135,34 +144,35 @@ HireSense-AI
 │   └── _AI_Insights.py
 │
 ├── screenshots/
+│
 └── README.md
 ```
 
 ---
 
-# 🚀 How to Run
+# 🚀 Getting Started
 
-### Clone the Repository
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/shraddhasinha7777/HireSense-AI.git
 ```
 
-### Install Dependencies
+## 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Create Environment File
+## 3. Configure Environment Variables
 
-Create a `.env` file and add your Gemini API key.
+Create a `.env` file in the project folder and add your Gemini API key.
 
 ```env
 GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-### Run the Project
+## 4. Run the Application
 
 ```bash
 streamlit run Home.py
@@ -170,7 +180,7 @@ streamlit run Home.py
 
 ---
 
-# 📌 Project Modules
+# 🎯 Core Modules
 
 - 🏠 Home
 - 📄 Resume Analyzer
@@ -180,7 +190,28 @@ streamlit run Home.py
 
 ---
 
-# 📷 Application Screenshots
+# 📌 Core Functionalities
+
+- Resume Parsing
+- ATS Score Calculation
+- Resume and Job Description Matching
+- Skill Gap Analysis
+- Explainable AI
+- AI Candidate Summary
+- SWOT Analysis
+- AI Hiring Recommendation
+- AI Interview Question Generation
+- Candidate Management
+- Blind Hiring
+- Candidate Ranking
+- Dashboard & Analytics
+- PDF Report Export
+- CSV Export
+- TXT Export
+
+---
+
+# 📷 Application Preview
 
 ## 🏠 Home
 
@@ -216,23 +247,6 @@ streamlit run Home.py
 
 ---
 
-# 🎯 Main Functionalities
-
-- Resume Parsing
-- ATS Score Calculation
-- Resume and Job Description Matching
-- Skill Gap Analysis
-- AI Candidate Summary
-- SWOT Analysis
-- AI Hiring Recommendation
-- Interview Question Generator
-- Candidate Management
-- Blind Hiring
-- Dashboard & Analytics
-- PDF, CSV and TXT Report Export
-
----
-
 # 👩‍💻 Developed By
 
 **Shraddha**
@@ -247,8 +261,26 @@ Academic Major Project • 2026
 
 ---
 
-## 📌 About this Project
+# 🌟 Project Highlights
 
-This project was developed as part of the BCA curriculum to understand how Artificial Intelligence can be applied in the recruitment process. It combines resume analysis, ATS evaluation, candidate management, and AI-based insights into a single application.
+- AI-Based Resume Screening
+- ATS Score Evaluation
+- Google Gemini AI Integration
+- Interactive Dashboard
+- Candidate Management System
+- Developed as a BCA Major Project
 
 ---
+
+## ⭐ Future Enhancements
+
+- Support for multiple job descriptions
+- Resume ranking using semantic similarity
+- Email notification feature
+- User authentication
+- Cloud database integration
+- Interview scheduling support
+
+---
+
+### Developed as a BCA Major Project to explore the use of Artificial Intelligence in recruitment.
