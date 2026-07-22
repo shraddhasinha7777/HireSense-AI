@@ -10,18 +10,6 @@
 ![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4)
 ![BCA Project](https://img.shields.io/badge/BCA-Major%20Project-success)
 
----
-
-## 🌟 Highlights
-
-- 🤖 Google Gemini AI Integration
-- 🎯 ATS-Based Resume Evaluation
-- 📄 Resume Parsing & Skill Matching
-- 📊 Interactive Recruitment Dashboard
-- 👥 Candidate Management
-- 📤 PDF, CSV & TXT Report Export
-
----
 
 ## 📖 Overview
 
@@ -36,6 +24,16 @@ The application simplifies the recruitment process by analyzing resumes, matchin
 Recruiters often spend significant time manually reviewing resumes. **HireSense-AI** automates the initial screening process, enabling faster and more informed hiring decisions through ATS evaluation, AI-powered insights, and centralized candidate management.
 
 ---
+
+## 🌟 Highlights
+
+- 🤖 Google Gemini AI Integration
+- 🎯 ATS-Based Resume Evaluation
+- 📄 Resume Parsing & Skill Matching
+- 📊 Interactive Recruitment Dashboard
+- 👥 Candidate Management
+- 📤 PDF, CSV & TXT Report Export
+
 
 ## ✨ Key Features
 
