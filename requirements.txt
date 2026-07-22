@@ -5,7 +5,4 @@ pdfplumber
 google-generativeai
 python-dotenv
 Pillow
-easyocr
-pytesseract
-opencv-python
 fpdf2

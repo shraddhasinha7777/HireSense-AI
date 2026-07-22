@@ -28,10 +28,10 @@ class Database:
                     jd_match REAL,
                     status TEXT,
                     matched_skills TEXT,
-                    ai_summary TEXT,           
-                    swot TEXT,                 
-                    interview_questions TEXT,  
-                    ai_recommendation TEXT,    
+                    ai_summary TEXT,
+                    swot TEXT,
+                    interview_questions TEXT,
+                    ai_recommendation TEXT,
                     created_at TEXT
                 )
             """)
@@ -51,28 +51,21 @@ class Database:
 
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            # ⭐ UPGRADE: Saving AI data directly to Database
+
+            # ⭐ PROFESSIONAL DUPLICATE CHECK
+            email_val = data.get("email", "unknown@ats.com")
+            cursor.execute("SELECT 1 FROM candidates WHERE email=?", (email_val,))
+            if cursor.fetchone():
+                return False
+
             cursor.execute("""
                 INSERT INTO candidates
-                (email, name, role, experience, education, location, ats_score, jd_match, status, matched_skills, ai_summary, swot, interview_questions, ai_recommendation, created_at)
+                (email, name, role, experience, education, location, ats_score,
+                 jd_match, status, matched_skills, ai_summary, swot,
+                 interview_questions, ai_recommendation, created_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                ON CONFLICT(email) DO UPDATE SET
-                    name=excluded.name,
-                    role=excluded.role,
-                    experience=excluded.experience,
-                    education=excluded.education,
-                    location=excluded.location,
-                    ats_score=excluded.ats_score,
-                    jd_match=excluded.jd_match,
-                    status=excluded.status,
-                    matched_skills=excluded.matched_skills,
-                    ai_summary=excluded.ai_summary,
-                    swot=excluded.swot,
-                    interview_questions=excluded.interview_questions,
-                    ai_recommendation=excluded.ai_recommendation,
-                    created_at=excluded.created_at
             """, (
-                data.get("email", "unknown@ats.com"),
+                email_val,
                 data.get("name", "Unknown"),
                 data.get("role", "Unknown"),
                 data.get("experience", "Fresher"),
@@ -88,15 +81,41 @@ class Database:
                 data.get("ai_recommendation", ""),
                 created_at
             ))
+
             conn.commit()
+            return True
 
     def get_all_candidates(self):
         with self._get_connection() as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM candidates ORDER BY created_at DESC")
+            cursor.execute("""
+                SELECT *
+                FROM candidates
+                ORDER BY created_at DESC
+            """)
             rows = cursor.fetchall()
             return [dict(row) for row in rows]
+
+    # ⭐ NEW FUNCTION - Returns candidate with highest ATS score
+    def get_best_candidate(self):
+        with self._get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT *
+                FROM candidates
+                ORDER BY ats_score DESC
+                LIMIT 1
+            """)
+
+            row = cursor.fetchone()
+
+            if row:
+                return dict(row)
+
+            return None
 
     def clear_database(self):
         with self._get_connection() as conn:

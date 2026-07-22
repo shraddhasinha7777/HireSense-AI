@@ -2,6 +2,11 @@ import re
 import os
 import time
 import pdfplumber
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from typing import Dict, Any, List, Tuple
 
 class ResumeParser:
@@ -64,10 +69,10 @@ class ResumeParser:
     # ⭐ GRACEFUL OCR FALLBACK ENGINE (OPTIONAL)
     # ==========================================
     def _extract_via_ocr(self, pdf_path: str) -> str:
-        """
-        Optional Cloud OCR using Gemini Vision. 
-        Will NEVER crash the app if key is missing or Wi-Fi is down.
-        """
+        print("OCR Function Started")
+
+        api_key = os.getenv("GEMINI_API_KEY")
+        print("API Key Found:", bool(api_key))
         try:
             import google.generativeai as genai
             api_key = os.getenv("GEMINI_API_KEY")
