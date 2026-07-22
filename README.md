@@ -47,24 +47,13 @@ Resume(s) + Job Description
       Resume Parsing
             │
             ▼
-Candidate Information Extraction
+ ATS Scoring & Skill Matching
             │
             ▼
- Job Description Matching
+ Google Gemini AI
             │
             ▼
- Skill Matching & ATS Scoring
-            │
-            ▼
- Google Gemini AI Insights
-            │
-            ▼
- Store Results in SQLite
-            │
-            ▼
- Dashboard • Resume Analyzer
- Candidate Management • AI Insights
-```
+ Dashboard & AI Insights
 
 ---
 
