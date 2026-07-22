@@ -1,106 +1,88 @@
 # 🚀 HireSense-AI
 
-### Smart Recruitment Analytics System
+### AI-Powered Smart Recruitment Analytics System
+
+> **An AI-powered recruitment platform that automates resume screening, ATS evaluation, and candidate shortlisting.**
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-red?logo=streamlit)
-![SQLite](https://img.shields.io/badge/Database-SQLite-green?logo=sqlite)
-![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini-orange)
+![Streamlit](https://img.shields.io/badge/Framework-Streamlit-FF4B4B?logo=streamlit)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite)
+![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4)
+![BCA Project](https://img.shields.io/badge/BCA-Major%20Project-success)
+
+---
+
+## 🌟 Highlights
+
+- 🤖 Google Gemini AI Integration
+- 🎯 ATS-Based Resume Evaluation
+- 📄 Resume Parsing & Skill Matching
+- 📊 Interactive Recruitment Dashboard
+- 👥 Candidate Management
+- 📤 PDF, CSV & TXT Report Export
 
 ---
 
 ## 📖 Overview
 
-HireSense-AI is a Smart Recruitment Analytics System developed as a **Bachelor of Computer Applications (BCA) Major Project**.
+**HireSense-AI** is an AI-powered Smart Recruitment Analytics System developed as a **Bachelor of Computer Applications (BCA) Major Project**.
 
-The project helps recruiters analyze resumes more efficiently by combining resume parsing, ATS evaluation, skill matching, and AI-generated insights in a single application.
-
-Recruiters can upload one or multiple PDF resumes together with a job description. The system extracts candidate information, compares technical skills with the job requirements, calculates an ATS score, and generates AI-powered recommendations to support the shortlisting process.
-
-The application also provides candidate management, recruitment analytics, and report generation through a simple Streamlit interface.
+The application simplifies the recruitment process by analyzing resumes, matching them with job descriptions, calculating ATS scores, identifying skill gaps, and generating AI-powered candidate insights using **Google Gemini AI**. It also provides candidate management, recruitment analytics, and report generation through an interactive Streamlit interface.
 
 ---
 
-## ✨ Features
+## 💡 Why HireSense-AI?
 
-### 📄 Resume Analysis
+Recruiters often spend significant time manually reviewing resumes. **HireSense-AI** automates the initial screening process, enabling faster and more informed hiring decisions through ATS evaluation, AI-powered insights, and centralized candidate management.
 
-- Upload one or multiple PDF resumes
-- Extract candidate details
-- Education & Experience Detection
-- Technical Skill Extraction
+---
 
-### 🎯 ATS Evaluation
+## ✨ Key Features
 
-- ATS Score Calculation
-- Job Description Matching
-- Skill Gap Analysis
-- Hiring Recommendation
-
-### 🤖 AI Features
-
-- Candidate Summary
-- SWOT Analysis
-- Hiring Recommendation
-- Interview Question Generator
-
-### 👥 Candidate Management
-
-- Candidate Records
-- Candidate Search
-- Bulk Resume Processing
-- Duplicate Candidate Detection
-- Blind Hiring Support
-
-### 📊 Dashboard
-
-- Recruitment KPIs
-- ATS Analytics
-- Candidate Analytics
-- Skill Distribution
-
-### 📤 Export
-
-- PDF Report
-- CSV Export
-- TXT Export
+- 📄 Resume Parsing & Candidate Information Extraction
+- 🎯 ATS Scoring & Job Description Matching
+- 📊 Skill Matching & Skill Gap Analysis
+- 🤖 AI Candidate Summary, SWOT Analysis & Interview Question Generator
+- 👥 Candidate Management & Blind Hiring Support
+- 📈 Recruitment Dashboard & Analytics
+- 📤 PDF, CSV & TXT Report Export
 
 ---
 
 ## 🔄 Workflow
 
 ```text
-Upload Resume(s) + Job Description
-                │
-                ▼
-         Resume Parsing
-                │
-                ▼
- Candidate Information Extraction
-                │
-                ▼
-          Skill Matching
-                │
-                ▼
-      ATS Score Calculation
-                │
-                ▼
-      Google Gemini AI Analysis
-                │
-                ▼
- Store Results in SQLite Database
-                │
-                ▼
+Resume(s) + Job Description
+            │
+            ▼
+      Resume Parsing
+            │
+            ▼
+Candidate Information Extraction
+            │
+            ▼
+ Job Description Matching
+            │
+            ▼
+ Skill Matching & ATS Scoring
+            │
+            ▼
+ Google Gemini AI Insights
+            │
+            ▼
+ Store Results in SQLite
+            │
+            ▼
  Dashboard • Resume Analyzer
  Candidate Management • AI Insights
 ```
 
 ---
 
-## 🛠 Technology Stack
+## 🛠 Tech Stack
 
 | Category | Technology |
-|-----------|------------|
+|----------|------------|
 | Language | Python |
 | Framework | Streamlit |
 | Database | SQLite |
@@ -108,53 +90,64 @@ Upload Resume(s) + Job Description
 | Resume Parsing | pdfplumber |
 | Data Processing | Pandas |
 | Visualization | Plotly |
-| PDF Reports | FPDF2 |
+| Report Generation | FPDF2 |
 | Environment | python-dotenv |
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```text
 HireSense-AI
 │
 ├── Home.py
+├── ai_service.py
+├── ats_engine.py
+├── database.py
 ├── resume_parser.py
 ├── skill_matcher.py
-├── ats_engine.py
-├── ai_service.py
-├── database.py
 ├── requirements.txt
 │
 ├── database/
 ├── pages/
+│   ├── Resume Analyzer
+│   ├── Dashboard
+│   ├── Candidate Management
+│   └── AI Insights
+│
 ├── screenshots/
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📸 Application Preview
 
-Clone the repository
+| Home | Dashboard |
+|------|-----------|
+| ![](screenshots/Home1.png) | ![](screenshots/Dashboard.png) |
+
+| Resume Analyzer | AI Insights |
+|-----------------|-------------|
+| ![](screenshots/ResumeAnalyser.png) | ![](screenshots/AI%20insight1.png) |
+
+---
+
+## 🚀 Getting Started
 
 ```bash
 git clone https://github.com/shraddhasinha7777/HireSense-AI.git
-```
-
-Install dependencies
-
-```bash
+cd HireSense-AI
 pip install -r requirements.txt
 ```
 
-Create a `.env` file
+Create a `.env` file:
 
 ```env
 GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-Run the application
+Run the application:
 
 ```bash
 streamlit run Home.py
@@ -162,50 +155,11 @@ streamlit run Home.py
 
 ---
 
-## 📸 Application Preview
-
-### 🏠 Home
-
-![Home](screenshots/Home1.png)
-
-![Home](screenshots/Home2.png)
-
----
-
-### 📄 Resume Analyzer
-
-![Resume Analyzer](screenshots/ResumeAnalyser.png)
-
----
-
-### 📊 Dashboard
-
-![Dashboard](screenshots/Dashboard.png)
-
----
-
-### 👥 Candidate Management
-
-![Candidate Management](screenshots/Candidate%20manage.png)
-
----
-
-### 🤖 AI Insights
-
-![AI Insights](screenshots/AI%20insight1.png)
-
-![AI Insights](screenshots/AI%20insight2.png)
-
----
-
 ## 👩‍💻 Developed By
 
-**Shraddha**
+**Shraddha*
 
-Bachelor of Computer Applications (BCA)
+Bachelor of Computer Applications (BCA)  
+Amrita AHEAD • Amrita Vishwa Vidyapeetham
 
-Amrita AHEAD
-
-Amrita Vishwa Vidyapeetham
-
-Academic Major Project • 2026
+**Academic Major Project • 2026**
