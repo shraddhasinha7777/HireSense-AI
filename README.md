@@ -10,6 +10,7 @@
 ![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4)
 ![BCA Project](https://img.shields.io/badge/BCA-Major%20Project-success)
 
+---
 
 ## 📖 Overview
 
@@ -24,7 +25,6 @@ The application simplifies the recruitment process by analyzing resumes, matchin
 Recruiters often spend significant time manually reviewing resumes. **HireSense-AI** automates the initial screening process, enabling faster and more informed hiring decisions through ATS evaluation, AI-powered insights, and centralized candidate management.
 
 ---
-
 
 ## ✨ Key Features
 
@@ -146,7 +146,7 @@ streamlit run Home.py
 
 ## 👩‍💻 Developed By
 
-**Shraddha*
+**Shraddha**
 
 Bachelor of Computer Applications (BCA)  
 Amrita AHEAD • Amrita Vishwa Vidyapeetham
