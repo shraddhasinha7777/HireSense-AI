@@ -25,15 +25,6 @@ Recruiters often spend significant time manually reviewing resumes. **HireSense-
 
 ---
 
-## 🌟 Highlights
-
-- 🤖 Google Gemini AI Integration
-- 🎯 ATS-Based Resume Evaluation
-- 📄 Resume Parsing & Skill Matching
-- 📊 Interactive Recruitment Dashboard
-- 👥 Candidate Management
-- 📤 PDF, CSV & TXT Report Export
-
 
 ## ✨ Key Features
 
