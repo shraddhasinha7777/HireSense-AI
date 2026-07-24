@@ -12,6 +12,14 @@
 
 ---
 
+## 🌐 Live Demo
+
+**🚀 Try the deployed application here:**
+
+**https://hiresense-ai2026.streamlit.app/**
+
+---
+
 ## 📖 Overview
 
 **HireSense-AI** is an AI-powered Smart Recruitment Analytics System developed as a **Bachelor of Computer Applications (BCA) Major Project**.
@@ -54,6 +62,7 @@ Resume(s) + Job Description
             │
             ▼
  Dashboard & AI Insights
+```
 
 ---
 
