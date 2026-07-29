@@ -11,18 +11,28 @@ class AIService:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             genai.configure(api_key=self.api_key)
-            print("========== GEMINI MODELS ==========")
-
-try:
-    for model in genai.list_models():
-        print(model.name)
-        print(model.supported_generation_methods)
-        print("----------------------------")
-except Exception as e:
-    print("ERROR:", e)
-
-print("===================================")
-            self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
+            
+            # Smart Auto-Select valid model without crash
+            try:
+                valid_models = []
+                for m in genai.list_models():
+                    if 'generateContent' in m.supported_generation_methods:
+                        valid_models.append(m.name)
+                
+                if valid_models:
+                    # Pick flash if available, else pick first valid model
+                    selected_model = valid_models[0]
+                    for name in valid_models:
+                        if "flash" in name:
+                            selected_model = name
+                            break
+                    clean_name = selected_model.replace("models/", "")
+                    self.model = genai.GenerativeModel(clean_name)
+                else:
+                    self.model = genai.GenerativeModel("gemini-1.5-flash")
+            except Exception as e:
+                print("Model Detection Error:", e)
+                self.model = genai.GenerativeModel("gemini-1.5-flash")
         else:
             self.model = None
 
