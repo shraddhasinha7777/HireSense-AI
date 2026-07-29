@@ -6,8 +6,10 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from database import Database
+from ai_service import AIService
 
 db = Database()
+ai_service = AIService()
 
 st.set_page_config(page_title="AI Insights | HireSense-AI", page_icon="🧠", layout="wide")
 
@@ -53,6 +55,24 @@ st.markdown("""
     font-size: 12px;
     flex-shrink: 0;
 }
+.chat-msg-user {
+    background: #1E1B4B;
+    border: 1px solid #4F46E5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: #E2E8F0;
+    font-size: 13px;
+}
+.chat-msg-ai {
+    background: #060813;
+    border: 1px solid #1E293B;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    color: #38BDF8;
+    font-size: 13px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -89,14 +109,14 @@ except: questions = []
 ai_summary = candidate.get("ai_summary") or "AI Summary not available in database."
 status_text = candidate.get("status", "Review Manually")
 
-# Handle Education Fallback Professionally
+# Handle Education Fallback
 raw_edu = str(candidate.get("education", "Not Found"))
 if not raw_edu or raw_edu in ["Not Found", "None", "Unknown", "NaN"]:
     display_education = "Education details not mentioned in resume."
 else:
     display_education = raw_edu
 
-# Determine Best Suitable Role dynamically using requested logic
+# Determine Best Suitable Role
 applied_role = candidate.get("role", "Professional")
 if ats_val >= 80:
     best_role = applied_role
@@ -135,7 +155,7 @@ summary_html = f"""
 st.markdown("### 👤 Candidate Profile Summary")
 st.markdown(summary_html, unsafe_allow_html=True)
 
-# 2 & 3. Explainable AI (XAI) & Why Candidate Got X%
+# 2 & 3. Explainable AI (XAI)
 st.markdown("### 🔍 Explainable AI (XAI) & Skill Alignment")
 c1, c2 = st.columns(2)
 
@@ -144,7 +164,6 @@ with c1:
     matched_list = raw_m.split(',') if isinstance(raw_m, str) and raw_m else (raw_m if isinstance(raw_m, list) else [])
     matched_list = [s.strip() for s in matched_list if s.strip()]
     
-    # ⭐ Fetch real dynamic missing skills from database with safe fallback
     raw_ms = candidate.get("missing_skills", "")
     missing_list = raw_ms.split(',') if isinstance(raw_ms, str) and raw_ms else (raw_ms if isinstance(raw_ms, list) else [])
     missing_list = [s.strip() for s in missing_list if s.strip()]
@@ -191,7 +210,7 @@ with c2:
     """
     st.markdown(why_card_html, unsafe_allow_html=True)
 
-# 4. UNIFIED 2x2 DYNAMIC AI-GENERATED SWOT ANALYSIS CONTAINER
+# 4. SWOT Analysis
 strengths_text = swot.get("strengths", "Good technical skills, proper project knowledge, and clear work history.")
 weaknesses_text = swot.get("weaknesses", "Lacks experience in some advanced tools and cloud technologies.")
 opportunities_text = swot.get("opportunities", "High chance to learn new technologies and grow in the technical team.")
@@ -203,22 +222,18 @@ swot_html = f"""
         💪 AI-Generated SWOT Analysis
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-        <!-- Strengths -->
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-left: 4px solid #10B981; padding: 16px; border-radius: 10px;">
             <div style="color: #34D399; font-weight: 700; font-size: 14px; margin-bottom: 8px;">Strengths</div>
             <p style="color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.6;">• {strengths_text}</p>
         </div>
-        <!-- Weaknesses -->
         <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-left: 4px solid #EF4444; padding: 16px; border-radius: 10px;">
             <div style="color: #F87171; font-weight: 700; font-size: 14px; margin-bottom: 8px;">Weaknesses</div>
             <p style="color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.6;">• {weaknesses_text}</p>
         </div>
-        <!-- Opportunities -->
         <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-left: 4px solid #3B82F6; padding: 16px; border-radius: 10px;">
             <div style="color: #60A5FA; font-weight: 700; font-size: 14px; margin-bottom: 8px;">Opportunities</div>
             <p style="color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.6;">• {opportunities_text}</p>
         </div>
-        <!-- Threats -->
         <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-left: 4px solid #F59E0B; padding: 16px; border-radius: 10px;">
             <div style="color: #FBBF24; font-weight: 700; font-size: 14px; margin-bottom: 8px;">Threats</div>
             <p style="color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.6;">• {threats_text}</p>
@@ -228,7 +243,7 @@ swot_html = f"""
 """
 st.markdown(swot_html, unsafe_allow_html=True)
 
-# 5. DYNAMIC INTERVIEW QUESTIONS ONLY
+# 5. DYNAMIC INTERVIEW QUESTIONS
 st.markdown("### 🎤 AI Interview Questions")
 for idx, q_obj in enumerate(questions[:5], 1):
     q_text = q_obj.get("question", str(q_obj)) if isinstance(q_obj, dict) else str(q_obj)
@@ -239,3 +254,86 @@ for idx, q_obj in enumerate(questions[:5], 1):
     </div>
     """
     st.markdown(single_q_html, unsafe_allow_html=True)
+
+st.divider()
+
+# =============================================================
+# ⭐ AI RECRUITER COPILOT & EMAIL GENERATOR
+# =============================================================
+st.markdown("### 🤖 AI Recruiter Copilot")
+st.caption("Ask questions about candidates or generate automated recruitment emails.")
+
+chat_key = f"chat_{candidate['name']}"
+draft_key = f"draft_{candidate['name']}"
+
+if chat_key not in st.session_state:
+    st.session_state[chat_key] = []
+
+col_copilot, col_email = st.columns([1.2, 1], gap="large")
+
+with col_copilot:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:15px; font-weight:700; color:#38BDF8; margin-bottom:12px;">💬 Ask AI Recruiter Assistant</div>', unsafe_allow_html=True)
+    
+    for msg in st.session_state[chat_key]:
+        if msg["role"] == "user":
+            st.markdown(f'<div class="chat-msg-user"><b>👤 Recruiter:</b> {msg["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="chat-msg-ai"><b>🤖 Copilot:</b> {msg["content"]}</div>', unsafe_allow_html=True)
+
+    user_query = st.text_input(f"Ask something about {candidate['name']}...", key=f"input_{candidate['name']}", placeholder="e.g., Is this candidate suitable for Senior Python Developer role?")
+    
+    c_btn1, c_btn2 = st.columns([1, 1])
+    with c_btn1:
+        if st.button("🚀 Ask AI", use_container_width=True, key=f"btn_ask_{candidate['name']}"):
+            if user_query.strip():
+                st.session_state[chat_key].append({"role": "user", "content": user_query})
+                
+                cand_ctx = {
+                    "name": candidate["name"],
+                    "role": candidate.get("role", "Professional"),
+                    "ats_score": candidate.get("ats_score", 70),
+                    "experience": candidate.get("experience", "Fresher"),
+                    "education": candidate.get("education", "Graduate"),
+                    "matched_skills": candidate.get("matched_skills", ""),
+                    "missing_skills": candidate.get("missing_skills", ""),
+                    "status": candidate.get("status", "Pending Review")
+                }
+                
+                ai_reply = ai_service.chat_with_recruiter(user_query, cand_ctx, st.session_state[chat_key])
+                st.session_state[chat_key].append({"role": "assistant", "content": ai_reply})
+                st.rerun()
+
+    with c_btn2:
+        if st.button("🗑️ Clear Chat", use_container_width=True, key=f"btn_clear_{candidate['name']}"):
+            st.session_state[chat_key] = []
+            if draft_key in st.session_state:
+                del st.session_state[draft_key]
+            st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col_email:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:15px; font-weight:700; color:#A78BFA; margin-bottom:12px;">📧 Generate Candidate Email</div>', unsafe_allow_html=True)
+    
+    email_type = st.selectbox(
+        "Select Email Template Type",
+        ["Interview Invitation", "Shortlisted", "Offer Letter", "Application Under Review", "Rejection Email"],
+        key=f"email_select_{candidate['name']}"
+    )
+    
+    if st.button("✨ Draft Email", type="primary", use_container_width=True, key=f"btn_email_{candidate['name']}"):
+        cand_data_for_email = {
+            "name": candidate["name"],
+            "role": candidate.get("role", "Professional"),
+            "ats_score": candidate.get("ats_score", 70)
+        }
+        drafted_email = ai_service.generate_recruitment_email(email_type, cand_data_for_email)
+        st.session_state[draft_key] = drafted_email
+
+    if draft_key in st.session_state:
+        st.text_area("Generated Email Draft", value=st.session_state[draft_key], height=180, key=f"text_email_{candidate['name']}")
+        st.caption("📋 Copy this text to send to the candidate.")
+
+    st.markdown('</div>', unsafe_allow_html=True)
