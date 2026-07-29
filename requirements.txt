@@ -2,7 +2,7 @@ streamlit
 pandas
 plotly
 pdfplumber
-google-generativeai>=0.5.2
+google-generativeai
 python-dotenv
 Pillow
 fpdf2
