@@ -1,7 +1,7 @@
 import json
 import os
 import google.generativeai as genai
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -96,3 +96,82 @@ class AIService:
             return ai_insights
         except Exception:
             return smart_fallback
+
+    def chat_with_recruiter(self, user_query: str, candidate_context: Dict[str, Any], chat_history: List[Dict[str, str]] = None) -> str:
+        if not self.model:
+            return f"I analyzed {candidate_context.get('name', 'the candidate')}. Based on the ATS score ({candidate_context.get('ats_score')}%), they are suitable for screening. (Gemini API key not active for live chat)."
+
+        history_str = ""
+        if chat_history:
+            for msg in chat_history[-6:]:
+                history_str += f"{msg['role'].upper()}: {msg['content']}\n"
+
+        prompt = f"""
+        You are an AI Hiring Copilot assisting a Recruiter in evaluating candidates.
+        
+        Selected Candidate Context:
+        - Name: {candidate_context.get('name')}
+        - Role: {candidate_context.get('role')}
+        - ATS Score: {candidate_context.get('ats_score')}%
+        - Experience: {candidate_context.get('experience')}
+        - Education: {candidate_context.get('education')}
+        - Matched Skills: {candidate_context.get('matched_skills')}
+        - Missing Skills: {candidate_context.get('missing_skills')}
+        - Status: {candidate_context.get('status')}
+
+        Recent Chat History:
+        {history_str}
+
+        Recruiter Question: {user_query}
+
+        Provide a concise, highly professional, and helpful response for the recruiter in easy-to-understand English. Keep it direct and insightful.
+        If information is unavailable, clearly state that instead of inventing details.
+        """
+
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except Exception as e:
+            return f"Sorry, I couldn't process that query right now. Detail: {str(e)}"
+
+    def generate_recruitment_email(self, email_type: str, candidate_data: Dict[str, Any]) -> str:
+        name = candidate_data.get("name", "Candidate")
+        role = candidate_data.get("role", "Software Professional")
+        
+        if not self.model:
+            if email_type == "Interview Invitation":
+                return f"Subject: Interview Invitation - {role} Position\n\nDear {name},\n\nWe were impressed by your profile and would like to invite you for a technical interview round for the {role} position.\n\nBest regards,\nRecruitment Team"
+            elif email_type == "Shortlisted":
+                return f"Subject: Congratulations! You've been shortlisted for {role}\n\nDear {name},\n\nWe are pleased to inform you that your application for the {role} position has been shortlisted. We will be in touch shortly regarding the next steps.\n\nBest regards,\nRecruitment Team"
+            elif email_type == "Offer Letter":
+                return f"Subject: Job Offer - {role} at HireSense-AI\n\nDear {name},\n\nWe are thrilled to offer you the position of {role}. We were highly impressed with your skills and believe you will be a great addition to our team.\n\nBest regards,\nHR Department"
+            elif email_type == "Rejection Email":
+                return f"Subject: Application Update - {role}\n\nDear {name},\n\nThank you for applying for the {role} position. After careful review, we have decided to move forward with other candidates.\n\nBest regards,\nRecruitment Team"
+            else:
+                return f"Subject: Application Under Review - {role}\n\nDear {name},\n\nYour application for {role} is under review. We will contact you soon with further updates.\n\nBest regards,\nRecruitment Team"
+
+        prompt = f"""
+        Write a professional HR email to a candidate.
+        
+        Email Type: {email_type}
+        Candidate Name: {name}
+        Role Applied: {role}
+        ATS Score: {candidate_data.get('ats_score')}%
+
+        Output format:
+        Subject: [Clear Email Subject]
+
+        Dear {name},
+
+        [Professional, empathetic, and clear body text appropriate for {email_type}]
+
+        Best regards,
+        Talent Acquisition Team
+        HireSense-AI
+        """
+
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except Exception:
+            return f"Subject: Update on your application for {role}\n\nDear {name},\n\nThank you for your interest in the {role} position. We will get back to you shortly with next steps.\n\nBest regards,\nRecruitment Team"
