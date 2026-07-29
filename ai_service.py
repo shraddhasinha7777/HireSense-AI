@@ -11,6 +11,17 @@ class AIService:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             genai.configure(api_key=self.api_key)
+            print("========== GEMINI MODELS ==========")
+
+try:
+    for model in genai.list_models():
+        print(model.name)
+        print(model.supported_generation_methods)
+        print("----------------------------")
+except Exception as e:
+    print("ERROR:", e)
+
+print("===================================")
             self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
         else:
             self.model = None
