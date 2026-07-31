@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from collections import Counter
 import sys
 import os
 
@@ -26,7 +25,6 @@ st.markdown("""
 
 .chart-card { background: #0D1127; border: 1px solid #1E293B; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
 .chart-title { color: #38BDF8; font-size: 16px; font-weight: 800; margin-bottom: 15px; border-bottom: 1px solid #1E293B; padding-bottom: 10px; }
-.skill-pill { background: rgba(56, 189, 248, 0.1); border: 1px solid #38BDF8; color: #38BDF8; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin: 4px; font-weight: bold;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -40,7 +38,9 @@ if not records:
 else:
     df = pd.DataFrame(records)
     
-    # 1. CORE KPIs
+    # -------------------------------------------------------------
+    # 1. KPI CARDS
+    # -------------------------------------------------------------
     total_cands = len(df)
     avg_ats = round(df['ats_score'].mean(), 1)
     highly_rec = len(df[df['status'] == 'Highly Recommended'])
@@ -54,15 +54,16 @@ else:
     
     st.write("")
     
-    # 2. VISUAL ANALYTICS CHARTS (Professional Color Palette)
+    # -------------------------------------------------------------
+    # 2. ATS COMPARISON (Bar) & RECOMMENDATION DISTRIBUTION (Donut)
+    # -------------------------------------------------------------
     ch1, ch2 = st.columns(2)
     
     with ch1:
-        st.markdown('<div class="chart-card"><div class="chart-title">📊 Candidate ATS Score Comparison</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-card"><div class="chart-title">📊 ATS Score Comparison</div>', unsafe_allow_html=True)
         if not df.empty and 'name' in df.columns and 'ats_score' in df.columns:
             df_sorted = df.sort_values("ats_score", ascending=False)
             
-            # Professional Cyan/Blue Color Scale matching the dark theme
             fig_bar = px.bar(
                 df_sorted, 
                 x='name', 
@@ -77,13 +78,13 @@ else:
                 font_color='#E2E8F0',
                 margin=dict(t=10, b=10, l=10, r=10),
                 height=280,
-                coloraxis_showscale=False # Hides color bar for a cleaner minimal look
+                coloraxis_showscale=False 
             )
             st.plotly_chart(fig_bar, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with ch2:
-        st.markdown('<div class="chart-card"><div class="chart-title">🥧 Recommendation Status Distribution</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-card"><div class="chart-title">🥧 Recommendation Distribution</div>', unsafe_allow_html=True)
         if not df.empty and 'status' in df.columns:
             status_counts_df = df['status'].value_counts().reset_index()
             status_counts_df.columns = ['Status', 'Count']
@@ -114,11 +115,13 @@ else:
             st.plotly_chart(fig_pie, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # 3. HIRING FUNNEL & TOP SKILLS
+    # -------------------------------------------------------------
+    # 3. RECRUITMENT PIPELINE & RECRUITMENT INSIGHTS
+    # -------------------------------------------------------------
     c1, c2 = st.columns([1.5, 1])
     
     with c1:
-        st.markdown('<div class="chart-card"><div class="chart-title">📈 Recruitment Pipeline Status</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-card"><div class="chart-title">📈 Recruitment Pipeline</div>', unsafe_allow_html=True)
         status_counts = df['status'].value_counts()
         
         for stat, count in status_counts.items():
@@ -141,26 +144,46 @@ else:
         st.markdown('</div>', unsafe_allow_html=True)
 
     with c2:
-        st.markdown('<div class="chart-card"><div class="chart-title">🔥 Top Market Skills Found</div>', unsafe_allow_html=True)
-        all_skills = []
-        for s_str in df['matched_skills'].dropna():
-            all_skills.extend([s.strip() for s in s_str.split(',') if s.strip()])
+        st.markdown('<div class="chart-card"><div class="chart-title">💡 Recruitment Insights</div>', unsafe_allow_html=True)
         
-        top_skills = [skill for skill, count in Counter(all_skills).most_common(8)]
-        if top_skills:
-            skills_html = "".join([f'<span class="skill-pill">{s}</span>' for s in top_skills])
-            st.markdown(f"<div>{skills_html}</div>", unsafe_allow_html=True)
+        if not df.empty:
+            best_cand_row = df.loc[df['ats_score'].idxmax()]
+            highest_score = best_cand_row['ats_score']
+            best_cand_name = best_cand_row['name']
+            lowest_score = df['ats_score'].min()
+            
+            st.markdown(f"""
+                <div style="margin-bottom: 18px;">
+                    <div style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">🏆 Highest ATS Score</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #10B981; line-height: 1.1;">{highest_score}%</div>
+                    <div style="font-size: 12px; color: #E2E8F0; margin-top: 4px;">👤 Best Candidate: <b>{best_cand_name}</b></div>
+                </div>
+                <div style="margin-bottom: 18px;">
+                    <div style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">📉 Lowest ATS Score</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #EF4444; line-height: 1.1;">{lowest_score}%</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">📊 Average ATS</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #38BDF8; line-height: 1.1;">{avg_ats}%</div>
+                </div>
+            """, unsafe_allow_html=True)
         else:
-            st.caption("Not enough skill data extracted yet.")
+            st.caption("Not enough data for insights.")
+            
         st.markdown('</div>', unsafe_allow_html=True)
 
+    # -------------------------------------------------------------
     # 4. RECENT CANDIDATES
-    st.markdown('<div class="chart-card"><div class="chart-title">🕒 Recently Processed Candidates</div>', unsafe_allow_html=True)
+    # -------------------------------------------------------------
+    st.markdown('<div class="chart-card"><div class="chart-title">🕒 Recent Candidates</div>', unsafe_allow_html=True)
     recent_df = df.sort_values("created_at", ascending=False).head(5)
     recent_df = recent_df[['name', 'role', 'ats_score', 'status', 'created_at']].rename(columns={
-        "name": "Candidate", "role": "Target Role", "ats_score": "ATS Score", "status": "Status", "created_at": "Processed Date"
+        "name": "Candidate", "role": "Target Role", "ats_score": "ATS", "status": "Status", "created_at": "Date"
     })
-    recent_df["ATS Score"] = recent_df["ATS Score"].round(1)
+    recent_df["ATS"] = recent_df["ATS"].round(1)
+    
+    # Format the Date nicely (e.g., 30 Jul 2026)
+    recent_df["Date"] = pd.to_datetime(recent_df["Date"]).dt.strftime('%d %b %Y')
     
     st.dataframe(recent_df, use_container_width=True, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
