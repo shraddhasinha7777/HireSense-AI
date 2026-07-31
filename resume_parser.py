@@ -2,26 +2,18 @@ import re
 import os
 import time
 import pdfplumber
-
+from typing import Dict, Any, List, Tuple
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from typing import Dict, Any, List, Tuple
-
 class ResumeParser:
     """
-    🎯 The Master Resume Parser (Version 4 - 10/10 Enterprise Edition)
-    Features:
-    - 100+ Categorized Technical & Soft Skills Library (O(1) Set Lookup, easily extractable to skills.json)
-    - Graceful, Optional Gemini Cloud OCR Fallback for Scanned Resumes
-    - Pure Numeric Metrics (Ready for SQL Aggregation, Sorting, and Plotly/D3 Graphs)
-    - Auto-generated UI Snapshot & Candidate Summary
-    - Zero Dependency Crash Guarantees (100% Fail-Safe)
+    🎯 The Master Resume Parser (Enterprise Version with Debugged Cloud OCR)
     """
 
     def __init__(self):
-        # 🚀 100+ Categorized Skill Library (Can be migrated to an external skills.json file seamlessly)
+        # 🚀 100+ Categorized Skill Library
         self.skill_library = {
             # Languages
             "PYTHON", "JAVA", "C++", "C#", "C", "JAVASCRIPT", "TYPESCRIPT", "PHP", "RUBY", 
@@ -66,30 +58,42 @@ class ResumeParser:
         return text.strip()
 
     # ==========================================
-    # ⭐ GRACEFUL OCR FALLBACK ENGINE (OPTIONAL)
+    # ⭐ GRACEFUL OCR FALLBACK ENGINE (DEBUGGED)
     # ==========================================
     def _extract_via_ocr(self, pdf_path: str) -> str:
-        print("OCR Function Started")
+        print("\n" + "🔍 [OCR ENGINE] Starting Cloud OCR Process...")
 
         api_key = os.getenv("GEMINI_API_KEY")
-        print("API Key Found:", bool(api_key))
+        print(f"🔑 [OCR ENGINE] API Key Loaded: {bool(api_key)}")
+
         try:
             import google.generativeai as genai
-            api_key = os.getenv("GEMINI_API_KEY")
             if not api_key:
+                print("❌ [OCR ENGINE] No API Key found in .env")
                 return "OCR_OPTIONAL_SKIP: No API Key found."
             
             genai.configure(api_key=api_key)
             uploaded_doc = genai.upload_file(path=pdf_path, display_name="Scanned_Resume_OCR")
+            
+            # Using stable gemini-1.5-flash model
             model = genai.GenerativeModel(model_name="gemini-1.5-flash")
             
-            prompt = "Extract all readable text from this scanned resume verbatim. Do not add markdown or extra commentary."
-            response = model.generate_content([uploaded_doc, prompt])
+            # Strict OCR prompt to prevent AI summarization/hallucination
+            prompt = (
+                "You are an expert OCR system. Read this scanned PDF resume image and transcriptor "
+                "extract ALL written text line-by-line exactly as it appears. "
+                "Include candidate name, email, phone number, education, work experience, and all skills. "
+                "Do not summarize, do not generate fake candidate data, and do not add conversational notes."
+            )
             
+            response = model.generate_content([uploaded_doc, prompt])
             genai.delete_file(uploaded_doc.name)
-            return response.text if response.text else ""
+            
+            extracted_text = response.text if response.text else ""
+            return extracted_text
             
         except Exception as e:
+            print(f"❌ [OCR ENGINE] Exception Occurred: {str(e)}")
             return f"OCR_OPTIONAL_SKIP: {str(e)}"
 
     # ==========================================
@@ -161,9 +165,6 @@ class ResumeParser:
         quality = "Excellent" if score >= 80 else "Good" if score >= 60 else "Average" if score >= 40 else "Poor"
         return score, quality
 
-    # ==========================================
-    # ⭐ UI METADATA GENERATORS
-    # ==========================================
     def _generate_snapshot(self, edu: str, exp: str, skills: List[str]) -> str:
         skill_txt = f"{len(skills)} verified skills" if skills else "No skills parsed"
         return f"{edu if edu != 'Not Found' else 'Graduate'} | {exp if exp != 'Not Found' else 'Fresher'} | {skill_txt}"
@@ -189,7 +190,6 @@ class ResumeParser:
     # 🚀 MAIN PARSING PIPELINE
     # ==========================================
     def parse_resume(self, pdf_path: str, existing_db_records: List[Dict] = None) -> Dict[str, Any]:
-        """Executes full PDF reading, optional OCR routing, and returns pure numeric metadata."""
         start_time = time.time()
         existing_db_records = existing_db_records or []
         
@@ -207,8 +207,17 @@ class ResumeParser:
         except Exception as e:
             return {"resume_status": f"Parsing Failed: {str(e)}"} 
 
+        # Force OCR if text is less than 50 words
         if len(raw_text.split()) < 50:
+            print("⚠️ PDF Text count < 50 words. Triggering Cloud OCR Engine...")
             ocr_text = self._extract_via_ocr(pdf_path)
+            
+            # 📌 PRINT EXACT OCR OUTPUT TO TERMINAL
+            print("=" * 60)
+            print("RAW OCR OUTPUT RETURNED FROM GEMINI:")
+            print(ocr_text)
+            print("=" * 60)
+
             if not ocr_text.startswith("OCR_OPTIONAL_SKIP"):
                 raw_text = ocr_text
                 is_scanned_ocr = True
@@ -219,6 +228,11 @@ class ResumeParser:
         email = self._extract_email(clean_text)
         phone = self._extract_phone(clean_text)
         skills = self._extract_skills(clean_text)
+
+        print(f"🎯 Extracted Name  : {name}")
+        print(f"📧 Extracted Email : {email}")
+        print(f"🛠️ Extracted Skills: {skills}")
+
         edu_title, edu_score = self._extract_education(clean_text)
         exp_title, exp_score = self._extract_experience(clean_text)
         res_score, res_quality = self._assess_resume_quality(clean_text, skills)
@@ -233,13 +247,11 @@ class ResumeParser:
             for rec in existing_db_records
         )
 
-        # ⭐ UPGRADE: Pure Numeric Calculations (Ready for Graphing and Analytics!)
         exec_time = round(time.time() - start_time, 2)
         confidence = self._calculate_confidence(name, email, phone, edu_title, exp_title, skills, is_scanned_ocr)
         snapshot = self._generate_snapshot(edu_title, exp_title, skills)
         summary = self._generate_summary(name, edu_title, exp_title, skills)
 
-        # ❤️ FINAL OUTPUT: The Ultimate 10/10 Profile Object
         return {
             "name": name,
             "email": email,
@@ -249,16 +261,65 @@ class ResumeParser:
             "experience": exp_title,
             "experience_score": exp_score,
             "skills": skills,
+            "raw_text": clean_text,
             "resume_score": res_score,
             "resume_quality": res_quality,
             "modern_resume": is_modern,
             "dual_column": is_dual_col,
             "duplicate": is_duplicate,
             "ocr_used": is_scanned_ocr,
-            # ✅ FIX: Raw Numeric Floats (No strings! % and sec handled by UI)
             "extraction_confidence": confidence,  
             "extraction_time": exec_time,         
             "snapshot": snapshot,
             "candidate_summary": summary,
             "resume_status": "Parsed Successfully (Cloud OCR Used)" if is_scanned_ocr else "Parsed Successfully"
         }
+    # ==========================================
+    # ⭐ GRACEFUL OCR FALLBACK ENGINE (DEBUGGED)
+    # ==========================================
+    def _extract_via_ocr(self, pdf_path: str) -> str:
+        print("\n" + "🔍 [OCR ENGINE] Starting Cloud OCR Process...")
+        try:
+            import google.generativeai as genai
+            api_key = os.getenv("GEMINI_API_KEY")
+            
+            if not api_key:
+                print("❌ [OCR ENGINE] No API Key found.")
+                return "OCR_OPTIONAL_SKIP: No API Key found."
+            
+            genai.configure(api_key=api_key)
+            uploaded_doc = genai.upload_file(path=pdf_path, display_name="Scanned_Resume_OCR")
+            
+            # 🔥 FIX: Wait for Google to finish processing the PDF
+            while uploaded_doc.state.name == 'PROCESSING':
+                print("⏳ [OCR ENGINE] Waiting for Gemini File Processing to complete...")
+                time.sleep(2)
+                uploaded_doc = genai.get_file(uploaded_doc.name)
+                
+            if uploaded_doc.state.name == 'FAILED':
+                print("❌ [OCR ENGINE] Gemini rejected the file processing.")
+                return "OCR_OPTIONAL_SKIP: File processing failed on Google servers."
+
+            model = genai.GenerativeModel(model_name="gemini-3.6-flash")
+            prompt = (
+                "Extract all readable text from this scanned resume verbatim. "
+                "Do not summarize, do not generate fake candidate data."
+            )
+            
+            print("🚀 [OCR ENGINE] Extracting text...")
+            response = model.generate_content([uploaded_doc, prompt])
+            
+            genai.delete_file(uploaded_doc.name)
+            
+            # 🔥 Safety Check: Will prevent code from crashing if blocked
+            try:
+                extracted_text = response.text
+                return extracted_text if extracted_text else ""
+            except ValueError:
+                print(f"❌ [OCR ENGINE SAFETY BLOCK]: {response.prompt_feedback}")
+                return "OCR_OPTIONAL_SKIP: Response blocked by Safety Filters."
+            
+        except Exception as e:
+            # 🚨 THIS WILL REVEAL THE HIDDEN ERROR IN TERMINAL
+            print(f"❌ [OCR ENGINE CRASHED]: {str(e)}") 
+            return f"OCR_OPTIONAL_SKIP: {str(e)}"
