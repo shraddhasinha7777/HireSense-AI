@@ -308,7 +308,7 @@ with col2:
         accept_multiple_files=True,
         label_visibility="collapsed"
     )
-    st.markdown("<p style='color:#94A3B8; font-size:12px; margin-top:8px;'>⚡ Supports bulk upload • Max 200MB per file • OCR supported</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#94A3B8; font-size:12px; margin-top:8px;'>⚡ Supports bulk upload • Max 200MB per file </p>", unsafe_allow_html=True)
 
 # Timeline generator function for live tracking view
 def render_timeline(current_step):
@@ -386,7 +386,6 @@ with col_btn2:
                             extracted_role = line.split(":", 1)[1].strip()
                             break
                 if extracted_role == "Unknown Role":
-                    # Fallback to first line if Job Title prefix is missing
                     extracted_role = job_desc.strip().split("\n")[0][:35] if job_desc else "Software Engineer"
 
                 candidate_final_record = {
@@ -411,7 +410,9 @@ with col_btn2:
                 db.insert_candidate(candidate_final_record)
                 st.session_state.latest_candidate_data = candidate_final_record
                 st.session_state.current_missing_skills = skill_match_report["Missing_Skills"]
-                time.sleep(0.3)
+                
+                # 🔥 SMART THROTTLE BUFFER: Pauses 3.0 seconds between each file to prevent Gemini API 429 Rate Limits
+                time.sleep(3.0)
 
             # Step 7: Complete Status
             timeline_placeholder.markdown(render_timeline(7), unsafe_allow_html=True)
@@ -546,7 +547,7 @@ with f_col5:
 st.write("") # Spacer
 
 # =====================================================================
-# 6. WORKFLOW DIAGRAM (ORIGINAL WHITE CARDS WITH HOVER)
+# 6. WORKFLOW DIAGRAM 
 # =====================================================================
 st.markdown('<p class="workflow-title" style="color: #FFFFFF; font-size:18px; font-weight:800; margin-bottom:15px;">⚙️ How HireSense-AI Works</p>', unsafe_allow_html=True)
 w_col1, w_col2, w_col3, w_col4, w_col5 = st.columns(5)
