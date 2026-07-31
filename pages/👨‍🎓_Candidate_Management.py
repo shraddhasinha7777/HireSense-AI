@@ -18,10 +18,6 @@ st.markdown("""
 [data-testid="stSidebar"] { background-color: #030108 !important; border-right: 1px solid #1E293B !important; }
 .block-container { padding-top: 1.5rem; max-width: 1350px !important; }
 
-.kpi-card { background: #0D1127; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); text-align: center;}
-.kpi-val { font-size: 26px; font-weight: 900; color: #FFFFFF; margin: 4px 0; }
-.kpi-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; }
-
 .stTextInput input, .stSelectbox select { background-color: #060813 !important; color: #FFFFFF !important; border: 1px solid #1E293B !important; }
 </style>
 """, unsafe_allow_html=True)
@@ -33,26 +29,10 @@ records = db.get_all_candidates()
 
 if records:
     df_raw = pd.DataFrame(records)
-    total = len(df_raw)
     
-    # ⭐ EXACT ATS ENGINE SYNC - OPTION A (RECOMMENDED COMBINATION)
-    target_positive_statuses = ["Recommended", "Highly Recommended", "Shortlisted", "Excellent"]
-    recommended_count = len(df_raw[df_raw["status"].isin(target_positive_statuses)])
-    
-    pending = len(df_raw[df_raw["status"] == "Pending Review"])
-    rejected = len(df_raw[df_raw["status"] == "Rejected"])
-    avg = df_raw["ats_score"].mean() if "ats_score" in df_raw.columns else 0.0
-
-    c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(f'<div class="kpi-card"><div class="kpi-label">👥 Total Candidates</div><div class="kpi-val" style="color:#38BDF8;">{total}</div></div>', unsafe_allow_html=True)
-    c2.markdown(f'<div class="kpi-card"><div class="kpi-label">🎯 Recommended Candidates</div><div class="kpi-val" style="color:#10B981;">{recommended_count}</div></div>', unsafe_allow_html=True)
-    c3.markdown(f'<div class="kpi-card"><div class="kpi-label">⭐ Avg ATS Score</div><div class="kpi-val" style="color:#A78BFA;">{round(avg, 1)}%</div></div>', unsafe_allow_html=True)
-    c4.markdown(f'<div class="kpi-card"><div class="kpi-label">System Status</div><div class="kpi-val" style="color:#10B981; font-size:20px; margin-top:6px;">● Operational</div></div>', unsafe_allow_html=True)
-    st.divider()
-
     col1, col2, col3 = st.columns([2, 1, 1])
     with col1: search = st.text_input("🔍 Search by Candidate Name or Role...", placeholder="Type keyword...")
-    with col2: status_filter = st.selectbox("📋 Filter Status", ["All", "Shortlisted", "Recommended", "Under Review", "Rejected"])
+    with col2: status_filter = st.selectbox("📋 Filter Status", ["All", "Highly Recommended", "Recommended", "Pending Review", "Rejected"])
     with col3: sort = st.selectbox("⬇ Sort by", ["ATS Score", "JD Match", "Experience"])
 
     blind_hiring = st.toggle("🕶️ Enable Blind Hiring (Hide Candidate Identity)")
@@ -77,8 +57,8 @@ if records:
     elif sort == "JD Match" and "jd_match" in df.columns: df = df.sort_values("jd_match", ascending=False)
     elif sort == "Experience": df = df.sort_values("Exp_Num", ascending=False)
 
-    st.markdown("### 📋 Candidate Leaderboard & Selection Workspace")
-    st.caption("☑️ Check the box against any candidate to add them to the Interview Shortlist table below.")
+    st.markdown("### 📋 Candidate Database")
+    st.caption("Select candidates for interview shortlisting.")
 
     # ⭐ INTERACTIVE SELECTION FORM TABLE
     selected_candidates_list = []
